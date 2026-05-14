@@ -1,0 +1,27 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: remove-app
+  namespace: {{ .Values.argocdNamespace }}
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: {{ .Values.helmchartsRepoUrl | quote }}
+    path: remove-app
+    targetRevision: {{ .Values.helmchartsTargetRevision | quote }}
+    helm:
+      values: |
+        image:
+          repository: {{ .Values.ecrRepositoryUrl | quote }}
+          tag: {{ .Values.removeAppImageTag | quote }}
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: {{ .Values.removeAppK8sNamespace | quote }}
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

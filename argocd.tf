@@ -6,10 +6,17 @@ resource "helm_release" "argocd" {
   namespace        = "argocd"
   create_namespace = true
   wait             = true
-  timeout          = 900
+  wait_for_jobs    = true
+  atomic           = true
+  timeout          = 1200
+  skip_crds        = false
 
   values = [
     yamlencode({
+      crds = {
+        install = true
+        keep    = true
+      }
       configs = {
         params = {
           "server.insecure" = "true"
@@ -22,50 +29,26 @@ resource "helm_release" "argocd" {
 }
 
 resource "time_sleep" "wait_argocd_crds" {
-  create_duration = "45s"
+  create_duration = "90s"
   depends_on      = [helm_release.argocd]
 }
 
-resource "kubernetes_manifest" "argocd_application_remove_app" {
-  manifest = {
-    apiVersion = "argoproj.io/v1alpha1"
-    kind       = "Application"
-    metadata = {
-      name      = "remove-app"
-      namespace = helm_release.argocd.namespace
-      finalizers = [
-        "resources-finalizer.argocd.argoproj.io",
-      ]
-    }
-    spec = {
-      project = "default"
-      source = {
-        repoURL        = var.helmcharts_repo_url
-        path           = "remove-app"
-        targetRevision = var.helmcharts_target_revision
-        helm = {
-          values = yamlencode({
-            image = {
-              repository = module.ecr.repository_url
-              tag          = var.remove_app_image_tag
-            }
-          })
-        }
-      }
-      destination = {
-        server    = "https://kubernetes.default.svc"
-        namespace = var.remove_app_k8s_namespace
-      }
-      syncPolicy = {
-        automated = {
-          prune    = true
-          selfHeal = true
-        }
-        syncOptions = ["CreateNamespace=true"]
-      }
-    }
-  }
+# Application Argo CD через локальный Helm-чарт (обход OpenAPI-проверки kubernetes_manifest до появления CRD).
+resource "helm_release" "remove_app_argocd_application" {
+  name      = "remove-app-application"
+  chart     = "${path.module}/charts/remove-app-application"
+  namespace = "argocd"
 
-  field_manager = "terraform"
-  depends_on    = [time_sleep.wait_argocd_crds]
+  depends_on = [time_sleep.wait_argocd_crds]
+
+  values = [
+    yamlencode({
+      helmchartsRepoUrl        = var.helmcharts_repo_url
+      helmchartsTargetRevision = var.helmcharts_target_revision
+      removeAppK8sNamespace    = var.remove_app_k8s_namespace
+      ecrRepositoryUrl         = module.ecr.repository_url
+      removeAppImageTag        = var.remove_app_image_tag
+      argocdNamespace          = "argocd"
+    }),
+  ]
 }

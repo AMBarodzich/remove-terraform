@@ -25,7 +25,8 @@ variable "argocd_helm_chart_version" {
 
 variable "helmcharts_repo_url" {
   type        = string
-  description = "Git URL репозитория с Helm-чартами (remove-helmcharts)"
+  description = "HTTPS URL репозитория с Helm-чартами (чарт remove-app в подкаталоге remove-app/). По умолчанию: https://github.com/AMBarodzich/remove-helmcharts"
+  default     = "https://github.com/AMBarodzich/remove-helmcharts"
 }
 
 variable "helmcharts_target_revision" {

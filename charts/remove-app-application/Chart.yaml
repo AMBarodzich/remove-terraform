@@ -1,0 +1,5 @@
+apiVersion: v2
+name: remove-app-application
+description: Argo CD Application для чарта remove-app из Git
+type: application
+version: 0.1.0
