@@ -39,7 +39,3 @@ variable "remove_app_k8s_namespace" {
   description = "Namespace в кластере для деплоя remove-app"
 }
 
-variable "remove_app_image_tag" {
-  type        = string
-  description = "Тег образа в ECR для remove-app (Argo передаёт в Helm values)"
-}

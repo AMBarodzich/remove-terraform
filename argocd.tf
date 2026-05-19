@@ -46,9 +46,8 @@ resource "helm_release" "remove_app_argocd_application" {
       helmchartsRepoUrl        = var.helmcharts_repo_url
       helmchartsTargetRevision = var.helmcharts_target_revision
       removeAppK8sNamespace    = var.remove_app_k8s_namespace
-      ecrRepositoryUrl         = module.ecr.repository_url
-      removeAppImageTag        = var.remove_app_image_tag
-      argocdNamespace          = "argocd"
+      ecrRepositoryUrl = module.ecr.repository_url
+      argocdNamespace  = "argocd"
     }),
   ]
 }

@@ -12,10 +12,10 @@ spec:
     path: remove-app
     targetRevision: {{ .Values.helmchartsTargetRevision | quote }}
     helm:
+      # Тег образа — только из remove-helmcharts/values.yaml (обновляет CI remove-app после push в ECR).
       values: |
         image:
           repository: {{ .Values.ecrRepositoryUrl | quote }}
-          tag: {{ .Values.removeAppImageTag | quote }}
   destination:
     server: https://kubernetes.default.svc
     namespace: {{ .Values.removeAppK8sNamespace | quote }}
