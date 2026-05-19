@@ -8,9 +8,22 @@ output "public_subnet_ids" {
   value       = module.vpc.public_subnets
 }
 
-output "ecr_repository_url" {
-  description = "URL репозитория ECR"
-  value       = module.ecr.repository_url
+output "ecr_remove_app_repository_url" {
+  description = "URL ECR для remove-app"
+  value       = module.ecr_remove_app.repository_url
+}
+
+output "ecr_remove_backend_repository_url" {
+  description = "URL ECR для remove-backend"
+  value       = module.ecr_remove_backend.repository_url
+}
+
+output "ecr_repository_urls" {
+  description = "Оба ECR (для Argo CD / CI)"
+  value = {
+    remove-app     = module.ecr_remove_app.repository_url
+    remove-backend = module.ecr_remove_backend.repository_url
+  }
 }
 
 output "github_actions_ecr_access_key_id" {

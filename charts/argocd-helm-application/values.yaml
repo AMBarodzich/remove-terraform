@@ -1,5 +1,7 @@
+applicationName: ""
+helmChartPath: ""
 helmchartsRepoUrl: https://github.com/AMBarodzich/remove-helmcharts
 helmchartsTargetRevision: main
-removeAppK8sNamespace: remove-app
+k8sNamespace: ""
 ecrRepositoryUrl: ""
 argocdNamespace: argocd

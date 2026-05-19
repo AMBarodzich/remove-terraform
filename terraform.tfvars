@@ -1,9 +1,12 @@
 aws_region          = "us-east-1"
 project_name        = "lesson23"
 cluster_version     = "1.35"
-ecr_repository_name = "lesson23-app"
+# Два ECR — по одному на микросервис (имена = ECR_REPOSITORY в GitHub Actions каждого репо).
+ecr_remove_app_repository_name     = "lesson23-app"
+ecr_remove_backend_repository_name = "lesson23-remove-backend"
 
 argocd_helm_chart_version  = "9.5.14"
-# Чарт remove-app: https://github.com/AMBarodzich/remove-helmcharts (ветка main, path remove-app/)
-helmcharts_target_revision = "main"
-remove_app_k8s_namespace = "remove-app"
+# Чарты: https://github.com/AMBarodzich/remove-helmcharts (ветка main)
+helmcharts_target_revision   = "main"
+remove_app_k8s_namespace     = "remove-app"
+remove_backend_k8s_namespace = "remove-backend"

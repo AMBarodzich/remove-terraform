@@ -32,7 +32,10 @@ resource "aws_iam_user_policy" "github_actions_ecr_push" {
           "ecr:UploadLayerPart",
           "ecr:CompleteLayerUpload",
         ]
-        Resource = module.ecr.repository_arn
+        Resource = [
+          module.ecr_remove_app.repository_arn,
+          module.ecr_remove_backend.repository_arn,
+        ]
       },
     ]
   })

@@ -33,21 +33,25 @@ resource "time_sleep" "wait_argocd_crds" {
   depends_on      = [helm_release.argocd]
 }
 
-# Application Argo CD через локальный Helm-чарт (обход OpenAPI-проверки kubernetes_manifest до появления CRD).
-resource "helm_release" "remove_app_argocd_application" {
-  name      = "remove-app-application"
-  chart     = "${path.module}/charts/remove-app-application"
+# Argo CD Applications через локальный Helm-чарт (обход OpenAPI-проверки до появления CRD).
+resource "helm_release" "argocd_applications" {
+  for_each = local.argocd_applications
+
+  name      = "${each.key}-application"
+  chart     = "${path.module}/charts/argocd-helm-application"
   namespace = "argocd"
 
   depends_on = [time_sleep.wait_argocd_crds]
 
   values = [
     yamlencode({
+      applicationName          = each.key
+      helmChartPath            = each.value.helm_chart_path
       helmchartsRepoUrl        = var.helmcharts_repo_url
       helmchartsTargetRevision = var.helmcharts_target_revision
-      removeAppK8sNamespace    = var.remove_app_k8s_namespace
-      ecrRepositoryUrl = module.ecr.repository_url
-      argocdNamespace  = "argocd"
+      k8sNamespace             = each.value.k8s_namespace
+      ecrRepositoryUrl         = each.value.ecr_repo_url
+      argocdNamespace          = "argocd"
     }),
   ]
 }

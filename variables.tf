@@ -13,9 +13,19 @@ variable "cluster_version" {
   description = "Версия Kubernetes для EKS (<major>.<minor>, например 1.35)"
 }
 
-variable "ecr_repository_name" {
+variable "ecr_remove_app_repository_name" {
   type        = string
-  description = "Имя репозитория ECR"
+  description = "Имя репозитория ECR для remove-app (CI remove-app → Argo CD)"
+}
+
+variable "ecr_remove_backend_repository_name" {
+  type        = string
+  description = "Имя репозитория ECR для remove-backend"
+}
+
+variable "remove_backend_k8s_namespace" {
+  type        = string
+  description = "Namespace в кластере для деплоя remove-backend"
 }
 
 variable "argocd_helm_chart_version" {

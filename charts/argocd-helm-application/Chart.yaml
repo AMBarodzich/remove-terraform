@@ -1,0 +1,5 @@
+apiVersion: v2
+name: argocd-helm-application
+description: Argo CD Application для Helm-чарта из Git (remove-helmcharts)
+type: application
+version: 0.1.0
